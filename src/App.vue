@@ -1,5 +1,6 @@
 <template>
   <div class="container column" >
+
     <form class="card card-w30" @submit.prevent="submit()">
       <div class="form-control">
         <label for="type">Тип блока</label>
@@ -17,41 +18,27 @@
       <button class="btn primary" :disabled="valueTextArea.length < 4" @click="BlockAdd()">Добавить</button>
     </form>
 
-    <div class="card card-w70"  :style="{background: loading === true ? '#2c3e50' : '' }">   
+  <div class="card card-w70"  :style="{background: loading === true ? '#2c3e50' : '' }">   
 
-      <component 
-      v-for="item in myBlockList"
-      :key="item.id"
-      :item="item"
-      :is="'app-' + item.select"      
-      @delete = "removeBlockApp"
-      ></component>
+  <component 
+  v-for="item in myBlockList"
+  :key="item.id"
+  :item="item"
+  :is="'app-' + item.select"      
+  @delete="removeBlockApp"
+  ></component>
 
-    <div class="loader" v-if="loading"></div>
-    <h3 v-if="myBlockList.length === 0"> Добавьте первый блок, чтобы начать создавать резюме </h3>
-    </div>
+  <div class="loader" v-if="loading"></div>
+  <h3 v-if="myBlockList.length === 0"> Добавьте первый блок, чтобы начать создавать резюме </h3>
+  </div>
   </div>
 
-  <div class="container">
-    <p>
-      <button class="btn primary" @click="loadComments()" v-if="myComments.length === 0">Загрузить комментарии</button>
-      <button class="btn danger" @click="clearComments()" v-if="myComments.length > 0">Закрыть комментарии</button>
-    </p>
-    <div class="card" v-if="myComments.length > 0">
-      <h2>Комментарии</h2>
-      <ul class="list">
-        
-    <component
-    v-for="item in myComments"
-    :key="item.id"
-    :item="item"
-    :is="'AppComments'"
-    ></component>
-
-      </ul>
-    </div>
-    <div class="loader" v-if="loading"></div>
-  </div>
+  <AppCommentsList
+  :myComments="myComments"
+  :loading="loading"
+  @openComments="loadComments"
+  @closeComments="clearComments"
+  ></AppCommentsList>
 
 </template>
 
@@ -60,8 +47,9 @@ import AppTitle from './components/AppTitle.vue'
 import AppAvatar from './components/AppAvatar.vue'
 import AppSubtitle from './components/AppSubtitle.vue'
 import AppText from './components/AppText.vue'
-import AppComments from './components/AppComments.vue'
+import AppCommentsList from './components/AppCommentsList.vue'
 import axios from 'axios'
+
 
 export default {
   data(){
@@ -139,8 +127,7 @@ export default {
     },
 
   },
-
-  components:{AppTitle,AppAvatar, AppSubtitle, AppText, AppComments},
+  components:{AppTitle,AppAvatar, AppSubtitle, AppText, AppCommentsList},
 
   mounted(){
     this.loadBlocks()
@@ -174,4 +161,91 @@ export default {
     height: auto;
     border-radius: 50%;
   }
+  
+.loader {
+    font-size: 10px;
+    margin: 50px auto;
+    text-indent: -9999em;
+    width: 11em;
+    height: 11em;
+    border-radius: 50%;
+    background: #ffffff;
+    background: -moz-linear-gradient(left, #ffffff 10%, rgba(255, 255, 255, 0) 42%);
+    background: -webkit-linear-gradient(left, #ffffff 10%, rgba(255, 255, 255, 0) 42%);
+    background: -o-linear-gradient(left, #ffffff 10%, rgba(255, 255, 255, 0) 42%);
+    background: -ms-linear-gradient(left, #ffffff 10%, rgba(255, 255, 255, 0) 42%);
+    background: linear-gradient(to right, #ffffff 10%, rgba(255, 255, 255, 0) 42%);
+    position: relative;
+    -webkit-animation: load3 1.4s infinite linear;
+    animation: load3 1.4s infinite linear;
+    -webkit-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+.loader:before {
+    width: 50%;
+    height: 50%;
+    background: #ffffff;
+    border-radius: 100% 0 0 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: '';
+}
+
+.loader:after {
+    background: #2c3e50;
+    width: 75%;
+    height: 75%;
+    border-radius: 50%;
+    content: '';
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.btn {
+    color: #42b983;
+    position: relative;
+    place-content: center;
+    place-items: center;
+    width: fit-content;
+    border-radius: 99px;
+    letter-spacing: 0.05em;
+    border: 1px solid #42b983;
+    text-decoration: none;
+    text-transform: uppercase;
+    margin-right: 10px;
+    padding: 0.5rem 0.5rem;
+    white-space: nowrap;
+    font-weight: 700;
+    outline: none;
+    background: #fff;
+    transition: all 0.22s;
+}
+
+@media (min-width: 250px) and (max-width: 720px){ 
+    .card.card-w70{
+        width: 100%;
+    }
+
+    .btn{
+        width: -webkit-fill-available;
+        margin-right: 0px;
+    }
+
+    .container.column{
+        display: block;
+    }
+
+    .card.card-w30 {
+    width: 100%;
+    margin-right: 0px;
+    }
+}
+
 </style>
